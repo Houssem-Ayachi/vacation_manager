@@ -1,0 +1,17 @@
+What is this project about?
+--> This is an app that handles vacations in a company dynamically (i.e every company can customize their leaves).
+    There are three types of users for this app: an owner, an admin and a normal user.
+    the owner has all the privileges of an admin + the ability to approve of leave requests
+    the admin can create new leave types and requests' responses
+    a user can submit a leave request
+
+How to run?
+--> First create a .env file
+    fill it with these variables
+    DATABASE_URL = url to mysql database
+    JWT_SECRET   = a secret string to encode authentication tokens
+    EMAIL        = the email you wish to use to send emails to users
+    EMAILPASS    = the password provided by your emailing service to authorize sending emails automatically
+--> npm install
+--> migrate prisma schema
+--> npm start

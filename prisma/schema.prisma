@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Contact_Types {
+  type String @unique
+  value_type String @default("string")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  contact Contacts[]
+}
+
+model Leave_Statuses{
+  label String @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  leaves Leave[]
+}
+
+model Leave_Types{
+  type String @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  leaves Leave[]
+}
+
+model Employees{
+  id Int @id @default(autoincrement())
+  name String
+  last_name String
+  email String @unique
+  password String
+  phone_number String
+  paid_leaves Float @default(0)
+  cnss Int
+  birth_date DateTime
+  joined_date DateTime
+  exit_date DateTime
+  admin_level Int @default(0) // super admin: 2 / admin: 1 / employee: 0
+  is_verified Boolean @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  contacts Contacts[]
+  leaves Leave[] @relation(name: "employee_relation")
+  leave_admin Leave[] @relation(name: "admin_relation")
+}
+
+model Contacts{
+  id Int @id @default(autoincrement())
+  value String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  contact_type_id String
+  employee_id Int
+  employee Employees @relation(fields: [employee_id], references: [id], onDelete: Cascade)
+  contacts_types Contact_Types @relation(fields: [contact_type_id], references: [type], onDelete: Cascade)
+}
+
+model Leave{
+  id Int @id @default(autoincrement())
+  start_date DateTime
+  end_date DateTime
+  response_date DateTime?
+  employee_comment String
+  admin_comment String?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  employee_id Int
+  admin_id Int?
+  leave_status_id String @default("pending")
+  leave_type_id String
+  employee Employees @relation(fields: [employee_id], references: [id], name: "employee_relation", onDelete: Cascade)
+  admin Employees? @relation(fields: [admin_id], references: [id], name: "admin_relation", onDelete: Cascade)
+  leave_status Leave_Statuses @relation(fields: [leave_status_id], references: [label], onDelete: Cascade)
+  leave_type Leave_Types @relation(fields: [leave_type_id], references: [type], onDelete: Cascade)
+}
